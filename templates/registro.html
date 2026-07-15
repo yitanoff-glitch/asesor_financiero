@@ -1,0 +1,12 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width=1">
+<title>Crear cuenta</title><link rel="stylesheet" href="/static/css/estilo.css"></head>
+<body><div class="contenedor" style="max-width:420px;margin-top:3rem">
+<div class="tarjeta"><h2 style="text-align:center;color:var(--p)">📝 Crear mi cuenta</h2>
+{% with m=get_flashed_messages() %}{% if m %}<div class="error">{{m[0]}}</div>{% endif %}{% endwith %}
+<form method="POST">
+<label>Nombre completo <input name="nombre" required></label>
+<label>Correo <input type="email" name="correo" required></label>
+<label>Clave (min 4 caracteres) <input type="password" name="clave" minlength="4" required></label>
+<button class="btn" type="submit">CREAR CUENTA</button>
+</form><p style="text-align:center;margin-top:1rem">Ya tengo cuenta → <a href="/login">Entrar</a></p>
+</div></div></body></html>

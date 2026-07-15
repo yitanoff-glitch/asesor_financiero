@@ -1,0 +1,11 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width=1">
+<title>Entrar</title><link rel="stylesheet" href="/static/css/estilo.css"></head>
+<body><div class="contenedor" style="max-width:420px;margin-top:3rem">
+<div class="tarjeta"><h2 style="text-align:center;color:var(--p)">🔐 Iniciar Sesión</h2>
+{% with m=get_flashed_messages() %}{% if m %}<div class="error">{{m[0]}}</div>{% endif %}{% endwith %}
+<form method="POST">
+<label>Correo <input type="email" name="correo" required></label>
+<label>Clave <input type="password" name="clave" required></label>
+<button class="btn" type="submit">ENTRAR</button>
+</form><p style="text-align:center;margin-top:1rem">¿Sin cuenta? <a href="/registro">Regístrate aquí</a></p>
+</div></div></body></html>

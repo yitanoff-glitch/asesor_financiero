@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="es-CO"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width=1">
+<title>Asesor Financiero | Meta Clara</title>
+<link rel="stylesheet" href="/static/css/estilo.css"></head>
+<body><div class="contenedor">
+
+<header>
+  <h1>🎯 Asesor Financiero</h1>
+  <span>Hola <b>{{u.nombre}}</b> | <a href="/logout">Cerrar sesión</a></span>
+</header>
+
+<!-- FORMULARIO -->
+<form id="f" class="tarjeta">
+  <div class="fila">
+    <label>Ingreso neto mensual $ <input type="number" name="ingreso" step="1000" required></label>
+    <label>Egresos totales mensuales $ <input type="number" name="egresos" step="1000" required></label>
+  </div>
+  <label>Cuotas de deudas actuales $ <input type="number" name="cuotas_deuda" step="1000" value="0"></label>
+  <hr>
+  <h3>💰 Mi meta financiera</h3>
+  <div class="fila">
+    <label>Monto total que necesito $ <input type="number" name="monto_meta" step="10000" required></label>
+    <label>Quiero cumplirla en (meses) <input type="number" name="plazo" min="1" max="360" required></label>
+  </div>
+  <button class="btn" type="submit">📊 ANALIZAR Y GUARDAR</button>
+</form>
+
+<!-- RESULTADOS -->
+<div id="r" class="tarjeta oculto"></div>
+
+</div><script src="/static/js/app.js"></script></body></html>
