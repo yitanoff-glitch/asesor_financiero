@@ -1,30 +1,120 @@
-<!DOCTYPE html><html lang="es-CO"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width=1">
-<title>Asesor Financiero | Meta Clara</title>
-<link rel="stylesheet" href="/static/css/estilo.css"></head>
-<body><div class="contenedor">
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width=1">
+    <title>Asesor Financiero | Meta Clara</title>
+    <link rel="stylesheet" href="/static/css/estilo.css">
+</head>
+<body>
+    <div class="contenedor">
 
-<header>
-  <h1>🎯 Asesor Financiero</h1>
-  <span>Hola <b>{{u.nombre}}</b> | <a href="/logout">Cerrar sesión</a></span>
-</header>
+        <header>
+            <h1>🎯 Asesor Financiero</h1>
+            <span>Hola <b>{{ usuario.nombre }}</b> | <a href="/logout">Cerrar sesión</a></span>
+        </header>
 
-<!-- FORMULARIO -->
-<form id="f" class="tarjeta">
-  <div class="fila">
-    <label>Ingreso neto mensual $ <input type="number" name="ingreso" step="1000" required></label>
-    <label>Egresos totales mensuales $ <input type="number" name="egresos" step="1000" required></label>
-  </div>
-  <label>Cuotas de deudas actuales $ <input type="number" name="cuotas_deuda" step="1000" value="0"></label>
-  <hr>
-  <h3>💰 Mi meta financiera</h3>
-  <div class="fila">
-    <label>Monto total que necesito $ <input type="number" name="monto_meta" step="10000" required></label>
-    <label>Quiero cumplirla en (meses) <input type="number" name="plazo" min="1" max="360" required></label>
-  </div>
-  <button class="btn" type="submit">📊 ANALIZAR Y GUARDAR</button>
-</form>
+        <!-- ✅ MENSAJES DE CONFIRMACIÓN / ERROR -->
+        {% with mensajes = get_flashed_messages() %}
+            {% if mensajes %}
+                <div class="tarjeta mensaje">
+                    {% for m in mensajes %}
+                        <p>{{ m|safe }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
-<!-- RESULTADOS -->
-<div id="r" class="tarjeta oculto"></div>
+        <!-- ✅ FORMULARIO CONECTADO AL BACKEND -->
+<form class="tarjeta" method="POST" action="{{ url_for('analizar_guardar') }}">
+              <div class="fila">
+                <label>Ingreso neto mensual $ 
+                    <input type="number" name="ingreso" step="1000" required 
+                           value="{{ datos.ingreso if datos else '' }}">
+                </label>
+                <label>Egresos totales mensuales $ 
+                    <input type="number" name="egresos" step="1000" required
+                           value="{{ datos.egresos if datos else '' }}">
+                </label>
+            </div>
+            <label>Cuotas de deudas actuales $ 
+                <input type="number" name="cuotas_deuda" step="1000" value="0"
+                       value="{{ datos.cuotas_deuda if datos else 0 }}">
+            </label>
+            <hr>
 
-</div><script src="/static/js/app.js"></script></body></html>
+            <h3>💰 Mi meta financiera</h3>
+            <div class="fila">
+                <label>Monto total que necesito $ 
+                    <input type="number" name="monto_meta" step="10000" required
+                           value="{{ datos.monto_meta if datos else '' }}">
+                </label>
+                <label>Quiero cumplirla en (meses) 
+                    <input type="number" name="plazo" min="1" max="360" required
+                           value="{{ datos.plazo if datos else '' }}">
+                </label>
+            </div>
+            <button class="btn" type="submit">📊 ANALIZAR Y GUARDAR</button>
+        </form>
+
+        <!-- ✅ RESULTADOS DEL ANÁLISIS -->
+        {% if resultado %}
+        <div id="r" class="tarjeta">
+            <h3>📋 Resultado de tu análisis</h3>
+            
+            <div class="fila">
+                <div>
+                    <p><strong>Tu capacidad de ahorro mensual:</strong></p>
+                    <p class="valor">${{ "{:,.0f}".format(resultado.capacidad) }}</p>
+                </div>
+                <div>
+                    <p><strong>Necesitas ahorrar cada mes:</strong></p>
+                    <p class="valor {% if resultado.alcanza %}ok{% else %}mal{% endif %}">
+                        ${{ "{:,.0f}".format(resultado.ahorro_necesario) }}
+                    </p>
+                </div>
+            </div>
+
+            <hr>
+            <p class="conclusion {{ resultado.clase }}">{{ resultado.mensaje }}</p>
+
+            {% if resultado.recomendaciones %}
+            <div style="margin-top:1rem">
+                <h4>💡 Recomendaciones:</h4>
+                <ul>
+                    {% for r in resultado.recomendaciones %}
+                        <li>{{ r }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- ✅ MIS METAS GUARDADAS -->
+        {% if usuario.metas %}
+        <div class="tarjeta">
+            <h3>🎯 Mis metas guardadas</h3>
+            {% for meta in usuario.metas %}
+<div class="meta-item">
+    <div>
+        <strong>{{ meta.nombre }}</strong>
+        <small>· Plazo: {{ meta.plazo_meses }} meses · {{ meta.tipo_plazo }} plazo</small>
+    </div>
+    <div class="fila">
+        <span>Progreso: ${{ "{:,.0f}".format(meta.monto_actual) }} / ${{ "{:,.0f}".format(meta.monto_objetivo) }}</span>
+        <div class="barra">
+            {% set p = (meta.monto_actual / meta.monto_objetivo * 100) if meta.monto_objetivo > 0 else 0 %}
+            {% if p > 100 %}{% set p = 100 %}{% endif %}
+            <div class="barra-llena" data-ancho="{{ p|int }}"></div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
